@@ -1,12 +1,15 @@
 import { apiClient, saveTokens, clearTokens } from './client';
-import { AuthTokens, LoginForm, RegisterForm } from '../types/auth.types';
+import { AuthTokens, LoginForm, RegisterForm, RegisterResponse } from '../types/auth.types';
 
 export const authApi = {
-  register: async (data: RegisterForm): Promise<AuthTokens> => {
+  register: async (data: RegisterForm): Promise<RegisterResponse> => {
     const response = await apiClient.post('/auth/register', data);
-    const tokens = response.data || response;
-    await saveTokens(tokens.accessToken, tokens.refreshToken);
-    return tokens;
+    return response.data || response;
+  },
+
+  resendVerification: async (email: string): Promise<{ message: string }> => {
+    const response = await apiClient.post('/auth/resend-verification', { email });
+    return response.data || response;
   },
 
   login: async (data: LoginForm): Promise<AuthTokens> => {

@@ -1,0 +1,15 @@
+{
+  "tabLabels": {
+    "skins": "Skins",
+    "language": "Language"
+  },
+  "skins": {
+    "sectionTitle": "CHOOSE YOUR SKIN",
+    "sectionSubtitle": "Each skin changes the entire experience — colors, messages and companion."
+  },
+  "language": {
+    "sectionTitle": "CHOOSE YOUR LANGUAGE",
+    "sectionSubtitle": "Pick the language you'd like to use in the app.",
+    "comingSoon": "Coming Soon"
+  }
+}

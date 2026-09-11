@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
-import { Colors } from '../../theme/colors';
+import Svg, { Circle } from 'react-native-svg';
+import { useTranslation } from 'react-i18next';
+import { useThemeColors } from '../../hooks/useTheme';
+import { ThemeColors } from '../../themes/types';
 import { FontSize } from '../../theme/typography';
 
 interface CalorieRingProps {
@@ -10,24 +12,14 @@ interface CalorieRingProps {
   size?: number;
 }
 
-const DOOM_QUOTES_OVER = [
-  'The excess corrupts your vessel.',
-  'Gluttony shall be your undoing.',
-  'The cursor tips into despair.',
-];
-
-const DOOM_QUOTES_UNDER = [
-  'Protein deficit detected.',
-  'Your gains are perishing.',
-  'Feed the mortal coil.',
-  'The void hungers within.',
-];
-
 export const CalorieRing: React.FC<CalorieRingProps> = ({
   consumed,
   goal,
   size = 200,
 }) => {
+  const { t } = useTranslation('dashboard');
+  const colors = useThemeColors();
+  const styles = makeStyles(colors);
   const strokeWidth = 14;
   const radius = (size - strokeWidth * 2) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -37,14 +29,10 @@ export const CalorieRing: React.FC<CalorieRingProps> = ({
   const isOver = consumed > goal;
 
   const ringColor = isOver
-    ? Colors.errorLight
+    ? colors.status.errorLight
     : percentage > 0.9
-      ? Colors.warningLight
-      : Colors.primaryLight;
-
-  const quote = isOver
-    ? DOOM_QUOTES_OVER[Math.floor(Date.now() / 1000) % DOOM_QUOTES_OVER.length]
-    : DOOM_QUOTES_UNDER[Math.floor(Date.now() / 1000) % DOOM_QUOTES_UNDER.length];
+      ? colors.status.warningLight
+      : colors.primaryLight;
 
   return (
     <View style={styles.container}>
@@ -54,7 +42,7 @@ export const CalorieRing: React.FC<CalorieRingProps> = ({
             cx={size / 2}
             cy={size / 2}
             r={radius}
-            stroke={Colors.surfaceElevated}
+            stroke={colors.surfaceElevated}
             strokeWidth={strokeWidth}
             fill="none"
           />
@@ -75,7 +63,7 @@ export const CalorieRing: React.FC<CalorieRingProps> = ({
 
         <View style={[styles.innerContent, { width: size, height: size }]}>
           <Text style={styles.remainingLabel}>
-            {isOver ? 'OVER BY' : 'REMAINING'}
+            {isOver ? t('kcalOver') : t('remaining')}
           </Text>
           <Text style={[styles.calorieNumber, isOver && styles.overColor]}>
             {Math.abs(Math.round(remaining))}
@@ -86,53 +74,43 @@ export const CalorieRing: React.FC<CalorieRingProps> = ({
           </Text>
         </View>
       </View>
-
-      <Text style={styles.doomQuote} numberOfLines={2}>
-        {quote}
-      </Text>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: { alignItems: 'center' },
-  innerContent: {
-    position: 'absolute',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  remainingLabel: {
-    fontSize: FontSize.xs,
-    fontWeight: '700',
-    color: Colors.textMuted,
-    letterSpacing: 2,
-    textTransform: 'uppercase',
-  },
-  calorieNumber: {
-    fontSize: FontSize['4xl'],
-    fontWeight: '900',
-    color: Colors.textPrimary,
-    fontVariant: ['tabular-nums'],
-    lineHeight: 44,
-  },
-  overColor: { color: Colors.errorLight },
-  calorieUnit: {
-    fontSize: FontSize.sm,
-    color: Colors.textSecondary,
-    fontWeight: '600',
-  },
-  consumed: {
-    fontSize: FontSize.xs,
-    color: Colors.textMuted,
-    marginTop: 4,
-    fontVariant: ['tabular-nums'],
-  },
-  doomQuote: {
-    marginTop: 16,
-    fontSize: FontSize.sm,
-    color: Colors.primaryLight,
-    fontStyle: 'italic',
-    textAlign: 'center',
-    maxWidth: 200,
-  },
-});
+function makeStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: { alignItems: 'center' },
+    innerContent: {
+      position: 'absolute',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    remainingLabel: {
+      fontSize: FontSize.xs,
+      fontWeight: '700',
+      color: colors.text.muted,
+      letterSpacing: 2,
+      textTransform: 'uppercase',
+    },
+    calorieNumber: {
+      fontSize: FontSize['4xl'],
+      fontWeight: '900',
+      color: colors.text.primary,
+      fontVariant: ['tabular-nums'],
+      lineHeight: 44,
+    },
+    overColor: { color: colors.status.errorLight },
+    calorieUnit: {
+      fontSize: FontSize.sm,
+      color: colors.text.secondary,
+      fontWeight: '600',
+    },
+    consumed: {
+      fontSize: FontSize.xs,
+      color: colors.text.muted,
+      marginTop: 4,
+      fontVariant: ['tabular-nums'],
+    },
+  });
+}

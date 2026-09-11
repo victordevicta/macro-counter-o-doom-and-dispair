@@ -2,12 +2,21 @@ import {
   Injectable,
   ConflictException,
   UnauthorizedException,
+  ForbiddenException,
+  BadRequestException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
+import { createHash, randomBytes } from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
+import { MailService } from '../mail/mail.service';
 import { RegisterDto } from './dto/register.dto';
+
+const hashToken = (token: string) =>
+  createHash('sha256').update(token).digest('hex');
+
+const VERIFICATION_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 
 @Injectable()
 export class AuthService {
@@ -15,6 +24,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private mailService: MailService,
   ) {}
 
   async validateUser(email: string, password: string) {
@@ -24,30 +34,35 @@ export class AuthService {
     const isValid = await bcrypt.compare(password, user.passwordHash);
     if (!isValid) return null;
 
+    if (!user.emailVerified) {
+      throw new ForbiddenException(
+        'Please verify your email before logging in.',
+      );
+    }
+
     const { passwordHash, ...result } = user;
     return result;
   }
 
   async register(dto: RegisterDto) {
-    const existing = await this.prisma.user.findFirst({
-      where: { OR: [{ email: dto.email }, { username: dto.username }] },
+    const existing = await this.prisma.user.findUnique({
+      where: { email: dto.email },
     });
 
     if (existing) {
-      throw new ConflictException(
-        existing.email === dto.email
-          ? 'This soul already exists in the registry.'
-          : 'This username is already claimed by another wanderer.',
-      );
+      throw new ConflictException('User already exists.');
     }
 
     const passwordHash = await bcrypt.hash(dto.password, 12);
+    const verificationToken = randomBytes(32).toString('hex');
 
-    const user = await this.prisma.user.create({
+    await this.prisma.user.create({
       data: {
         email: dto.email,
         username: dto.username,
         passwordHash,
+        emailVerificationToken: hashToken(verificationToken),
+        emailVerificationExpires: new Date(Date.now() + VERIFICATION_TOKEN_TTL_MS),
         profile: {
           create: {},
         },
@@ -58,7 +73,56 @@ export class AuthService {
       select: { id: true, email: true, username: true, createdAt: true },
     });
 
-    return this.generateTokens(user.id, user.email);
+    await this.mailService.sendVerificationEmail(dto.email, verificationToken);
+
+    return {
+      message: 'Your account was created. Please check your email to confirm it.',
+    };
+  }
+
+  async verifyEmail(token: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { emailVerificationToken: hashToken(token) },
+    });
+
+    if (
+      !user ||
+      !user.emailVerificationExpires ||
+      user.emailVerificationExpires < new Date()
+    ) {
+      throw new BadRequestException('Verification link is invalid or expired.');
+    }
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        emailVerified: true,
+        emailVerificationToken: null,
+        emailVerificationExpires: null,
+      },
+    });
+  }
+
+  async resendVerification(email: string) {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+
+    if (user && !user.emailVerified) {
+      const verificationToken = randomBytes(32).toString('hex');
+
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          emailVerificationToken: hashToken(verificationToken),
+          emailVerificationExpires: new Date(Date.now() + VERIFICATION_TOKEN_TTL_MS),
+        },
+      });
+
+      await this.mailService.sendVerificationEmail(email, verificationToken);
+    }
+
+    return {
+      message: 'If this email is registered, a new verification link has been sent.',
+    };
   }
 
   async login(user: { id: string; email: string }) {
@@ -72,7 +136,7 @@ export class AuthService {
       });
 
       const stored = await this.prisma.refreshToken.findUnique({
-        where: { token: refreshToken },
+        where: { token: hashToken(refreshToken) },
         include: { user: true },
       });
 
@@ -80,20 +144,18 @@ export class AuthService {
         throw new UnauthorizedException('Refresh token expired or invalid.');
       }
 
-      await this.prisma.refreshToken.delete({ where: { token: refreshToken } });
+      await this.prisma.refreshToken.delete({ where: { id: stored.id } });
 
       return this.generateTokens(payload.sub, payload.email);
     } catch {
-      throw new UnauthorizedException(
-        'Invalid refresh token. The curse endures.',
-      );
+      throw new UnauthorizedException('Invalid refresh token.');
     }
   }
 
   async logout(userId: string, refreshToken?: string) {
     if (refreshToken) {
       await this.prisma.refreshToken.deleteMany({
-        where: { userId, token: refreshToken },
+        where: { userId, token: hashToken(refreshToken) },
       });
     } else {
       await this.prisma.refreshToken.deleteMany({ where: { userId } });
@@ -117,7 +179,7 @@ export class AuthService {
     expiresAt.setDate(expiresAt.getDate() + 7);
 
     await this.prisma.refreshToken.create({
-      data: { userId, token: refreshToken, expiresAt },
+      data: { userId, token: hashToken(refreshToken), expiresAt },
     });
 
     return { accessToken, refreshToken };

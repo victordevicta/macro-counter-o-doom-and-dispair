@@ -4,15 +4,16 @@ import * as bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🩸 Seeding the dark registry...');
+  console.log('Seeding database...');
 
   const demoUser = await prisma.user.upsert({
-    where: { email: 'doom@doomvault.com' },
+    where: { email: 'demo@example.com' },
     update: {},
     create: {
-      email: 'doom@doomvault.com',
-      username: 'doom_wanderer',
-      passwordHash: await bcrypt.hash('D00mP@ssw0rd!', 12),
+      email: 'demo@example.com',
+      username: 'demo_user',
+      passwordHash: await bcrypt.hash('DemoPass1', 12),
+      emailVerified: true,
       profile: {
         create: {
           sex: 'MALE',
@@ -115,13 +116,13 @@ async function main() {
     });
   }
 
-  console.log('✅ The dark registry has been populated.');
-  console.log('   Demo account: doom@doomvault.com / D00mP@ssw0rd!');
+  console.log('Database seeded.');
+  console.log('   Demo account: demo@example.com / DemoPass1');
 }
 
 main()
   .catch((e) => {
-    console.error('💀 Seed ritual failed:', e);
+    console.error('Seed failed:', e);
     process.exit(1);
   })
   .finally(async () => {

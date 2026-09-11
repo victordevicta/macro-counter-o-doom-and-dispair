@@ -19,13 +19,13 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get('me')
-  @ApiOperation({ summary: 'Get your dark profile' })
+  @ApiOperation({ summary: 'Get your profile' })
   getProfile(@CurrentUser('id') userId: string) {
     return this.usersService.getProfile(userId);
   }
 
   @Put('profile')
-  @ApiOperation({ summary: 'Update your corporeal form' })
+  @ApiOperation({ summary: 'Update your profile' })
   updateProfile(
     @CurrentUser('id') userId: string,
     @Body() dto: UpdateProfileDto,
@@ -34,7 +34,7 @@ export class UsersController {
   }
 
   @Get('stats')
-  @ApiOperation({ summary: 'View your suffering statistics' })
+  @ApiOperation({ summary: 'Get your stats' })
   getStats(@CurrentUser('id') userId: string) {
     return this.usersService.getStats(userId);
   }

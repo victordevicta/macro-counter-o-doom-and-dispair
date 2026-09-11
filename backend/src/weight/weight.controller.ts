@@ -22,7 +22,7 @@ export class WeightController {
   constructor(private readonly weightService: WeightService) {}
 
   @Get()
-  @ApiOperation({ summary: 'View the chronicle of your corporeal mass' })
+  @ApiOperation({ summary: 'Get weight logs' })
   getLogs(
     @CurrentUser('id') userId: string,
     @Query('limit') limit?: string,
@@ -31,19 +31,19 @@ export class WeightController {
   }
 
   @Get('progress')
-  @ApiOperation({ summary: 'Behold your transformation through darkness' })
+  @ApiOperation({ summary: 'Get weight progress' })
   getProgress(@CurrentUser('id') userId: string) {
     return this.weightService.getProgress(userId);
   }
 
   @Post()
-  @ApiOperation({ summary: 'Record the burden of your mass' })
+  @ApiOperation({ summary: 'Log a weight entry' })
   addLog(@CurrentUser('id') userId: string, @Body() dto: AddWeightLogDto) {
     return this.weightService.addLog(userId, dto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Erase a measurement from the record' })
+  @ApiOperation({ summary: 'Delete a weight entry' })
   deleteLog(@CurrentUser('id') userId: string, @Param('id') logId: string) {
     return this.weightService.deleteLog(userId, logId);
   }

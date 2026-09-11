@@ -1,10 +1,11 @@
-import { IsOptional, IsString, IsNumber, Min, Max } from 'class-validator';
+import { IsOptional, IsString, IsNumber, Min, Max, MaxLength } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class SearchFoodDto {
   @ApiPropertyOptional()
   @IsString()
+  @MaxLength(200)
   query: string;
 
   @ApiPropertyOptional({ default: 1 })

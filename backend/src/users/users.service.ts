@@ -22,9 +22,9 @@ export class UsersService {
       },
     });
 
-    if (!user) throw new NotFoundException('Soul not found in the registry.');
+    if (!user) throw new NotFoundException('User not found.');
 
-    const { passwordHash, ...safeUser } = user;
+    const { passwordHash, emailVerificationToken, emailVerificationExpires, ...safeUser } = user;
     return safeUser;
   }
 

@@ -9,16 +9,17 @@ import {
   Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTranslation } from 'react-i18next';
 import { useDiaryStore } from '../../store/diaryStore';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Card } from '../../components/ui/Card';
-import { ProgressBar } from '../../components/ui/ProgressBar';
-import { Colors } from '../../theme/colors';
+import { useThemeColors, useThemeMessages } from '../../hooks/useTheme';
+import { ThemeColors } from '../../themes/types';
 import { FontSize } from '../../theme/typography';
 import { Spacing, BorderRadius } from '../../theme/spacing';
 import { Food } from '../../types/food.types';
-import { MealType, MEAL_LABELS } from '../../types/diary.types';
+import { MealType } from '../../types/diary.types';
 import { useAuthStore } from '../../store/authStore';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -35,6 +36,11 @@ export const AddFoodScreen: React.FC<AddFoodScreenProps> = ({
   onDone,
   onBack,
 }) => {
+  const { t } = useTranslation('addFood');
+  const colors = useThemeColors();
+  const messages = useThemeMessages();
+  const styles = makeStyles(colors);
+  const mealName = messages.mealNames[mealType];
   const { addEntry } = useDiaryStore();
   const { goals } = useAuthStore();
   const [servings, setServings] = useState('1');
@@ -61,7 +67,7 @@ export const AddFoodScreen: React.FC<AddFoodScreenProps> = ({
   const handleAdd = async () => {
     const s = parseFloat(servings);
     if (!s || s <= 0) {
-      Alert.alert('Invalid Amount', 'The portion must be greater than zero.');
+      Alert.alert(t('alerts.invalidTitle'), t('alerts.invalidMessage'));
       return;
     }
 
@@ -76,27 +82,27 @@ export const AddFoodScreen: React.FC<AddFoodScreenProps> = ({
       });
       onDone();
     } catch (error: any) {
-      Alert.alert('Failed', error?.response?.data?.message || 'The dark tome rejected your entry.');
+      Alert.alert(t('alerts.failedTitle'), error?.response?.data?.message || t('alerts.failedFallback'));
     } finally {
       setIsLoading(false);
     }
   };
 
   const nutrientRows = [
-    { label: 'Protein', value: calculated.proteinG, unit: 'g', color: Colors.protein, goal: goals?.proteinG },
-    { label: 'Carbohydrates', value: calculated.carbsG, unit: 'g', color: Colors.carbs, goal: goals?.carbsG },
-    { label: 'Fat', value: calculated.fatG, unit: 'g', color: Colors.fat, goal: goals?.fatG },
-    { label: 'Fiber', value: calculated.fiberG, unit: 'g', color: Colors.fiber, goal: goals?.fiberG },
-    { label: 'Sodium', value: calculated.sodiumMg, unit: 'mg', color: Colors.sodium, goal: goals?.sodiumMg },
+    { label: t('nutrition.protein'), value: calculated.proteinG, unit: 'g', color: colors.macros.protein, goal: goals?.proteinG },
+    { label: t('nutrition.carbs'), value: calculated.carbsG, unit: 'g', color: colors.macros.carbs, goal: goals?.carbsG },
+    { label: t('nutrition.fat'), value: calculated.fatG, unit: 'g', color: colors.macros.fat, goal: goals?.fatG },
+    { label: t('nutrition.fiber'), value: calculated.fiberG, unit: 'g', color: colors.macros.fiber, goal: goals?.fiberG },
+    { label: t('nutrition.sodium'), value: calculated.sodiumMg, unit: 'mg', color: colors.sodium ?? colors.macros.calories, goal: goals?.sodiumMg },
   ];
 
   return (
-    <LinearGradient colors={[Colors.background, '#100A14']} style={styles.gradient}>
+    <LinearGradient colors={colors.gradient as any} style={styles.gradient}>
       <View style={styles.headerBar}>
         <TouchableOpacity onPress={onBack} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={24} color={Colors.textPrimary} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Add to {MEAL_LABELS[mealType]}</Text>
+        <Text style={styles.headerTitle}>{t('headerTitle', { meal: mealName })}</Text>
         <View style={{ width: 40 }} />
       </View>
 
@@ -111,14 +117,14 @@ export const AddFoodScreen: React.FC<AddFoodScreenProps> = ({
               <Image source={{ uri: food.imageUrl }} style={styles.foodImage} />
             ) : (
               <View style={styles.foodImagePlaceholder}>
-                <Text style={{ fontSize: 36 }}>🍖</Text>
+                <Text style={{ fontSize: 36 }}>🍽️</Text>
               </View>
             )}
             <View style={styles.foodInfo}>
               <Text style={styles.foodName}>{food.name}</Text>
               {food.brand && <Text style={styles.foodBrand}>{food.brand}</Text>}
               <Text style={styles.servingInfo}>
-                Per {food.servingSize}{food.servingUnit}
+                {t('servingPer', { size: food.servingSize, unit: food.servingUnit })}
                 {food.servingName ? ` (${food.servingName})` : ''}
               </Text>
             </View>
@@ -127,7 +133,7 @@ export const AddFoodScreen: React.FC<AddFoodScreenProps> = ({
 
         {/* Serving Control */}
         <Card style={styles.servingCard}>
-          <Text style={styles.sectionTitle}>⚗️ PORTION ALCHEMY</Text>
+          <Text style={styles.sectionTitle}>{t('portion.sectionTitle')}</Text>
           <View style={styles.servingControl}>
             <TouchableOpacity
               style={styles.servingBtn}
@@ -171,20 +177,20 @@ export const AddFoodScreen: React.FC<AddFoodScreenProps> = ({
         {/* Calorie Preview */}
         <Card style={styles.calorieCard}>
           <View style={styles.calorieRow}>
-            <Text style={styles.calorieLabel}>TOTAL CALORIES</Text>
+            <Text style={styles.calorieLabel}>{t('totalCalories')}</Text>
             <Text style={styles.calorieValue}>{Math.round(calculated.calories)}</Text>
             <Text style={styles.calorieUnit}>kcal</Text>
           </View>
           {goals?.calories && (
             <Text style={styles.caloriePercent}>
-              {Math.round((calculated.calories / goals.calories) * 100)}% of your daily ration
+              {t('percentOfDaily', { percent: Math.round((calculated.calories / goals.calories) * 100) })}
             </Text>
           )}
         </Card>
 
         {/* Nutrition Facts */}
         <Card style={styles.nutritionCard}>
-          <Text style={styles.sectionTitle}>💀 NUTRITIONAL FATE</Text>
+          <Text style={styles.sectionTitle}>{t('nutrition.sectionTitle')}</Text>
           {nutrientRows.map((n) => (
             <View key={n.label} style={styles.nutrientRow}>
               <View style={styles.nutrientLeft}>
@@ -199,7 +205,7 @@ export const AddFoodScreen: React.FC<AddFoodScreenProps> = ({
         </Card>
 
         <Button
-          title={isLoading ? 'Inscribing...' : `ADD TO ${MEAL_LABELS[mealType].toUpperCase()}`}
+          title={isLoading ? t('addingButton') : t('addButton', { meal: mealName.toUpperCase() })}
           onPress={handleAdd}
           isLoading={isLoading}
           fullWidth
@@ -211,92 +217,94 @@ export const AddFoodScreen: React.FC<AddFoodScreenProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  gradient: { flex: 1 },
-  headerBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: Spacing.base,
-    paddingTop: 52,
-    paddingBottom: Spacing.sm,
-  },
-  backBtn: { padding: 4 },
-  headerTitle: { fontSize: FontSize.base, fontWeight: '700', color: Colors.textPrimary },
-  content: { padding: Spacing.base, paddingBottom: 100 },
-  foodCard: { marginBottom: Spacing.base },
-  foodHeader: { flexDirection: 'row', gap: 16, alignItems: 'center' },
-  foodImage: { width: 64, height: 64, borderRadius: BorderRadius.md },
-  foodImagePlaceholder: {
-    width: 64,
-    height: 64,
-    borderRadius: BorderRadius.md,
-    backgroundColor: Colors.surfaceElevated,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  foodInfo: { flex: 1 },
-  foodName: { fontSize: FontSize.base, fontWeight: '800', color: Colors.textPrimary },
-  foodBrand: { fontSize: FontSize.sm, color: Colors.gold, marginTop: 2 },
-  servingInfo: { fontSize: FontSize.xs, color: Colors.textMuted, marginTop: 4 },
-  servingCard: { marginBottom: Spacing.base },
-  sectionTitle: {
-    fontSize: FontSize.xs,
-    fontWeight: '800',
-    color: Colors.gold,
-    letterSpacing: 2,
-    textTransform: 'uppercase',
-    marginBottom: Spacing.base,
-  },
-  servingControl: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  servingBtn: {
-    width: 44,
-    height: 44,
-    backgroundColor: Colors.primary,
-    borderRadius: BorderRadius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  servingBtnText: { fontSize: FontSize.xl, fontWeight: '800', color: Colors.textPrimary },
-  servingInputWrapper: { flex: 1, alignItems: 'center' },
-  servingInput: { marginBottom: 0, width: '100%' },
-  servingUnit: { fontSize: FontSize.xs, color: Colors.textMuted, marginTop: 4 },
-  quickPortions: { flexDirection: 'row', gap: 8, marginTop: Spacing.sm },
-  portionChip: {
-    flex: 1,
-    paddingVertical: 8,
-    borderRadius: BorderRadius.md,
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    alignItems: 'center',
-  },
-  portionChipActive: { borderColor: Colors.primaryLight, backgroundColor: Colors.primaryGlow },
-  portionText: { fontSize: FontSize.sm, fontWeight: '700', color: Colors.textMuted },
-  portionTextActive: { color: Colors.primaryLight },
-  calorieCard: { marginBottom: Spacing.base, alignItems: 'center' },
-  calorieRow: { flexDirection: 'row', alignItems: 'baseline', gap: 8 },
-  calorieLabel: { fontSize: FontSize.xs, color: Colors.textMuted, letterSpacing: 2 },
-  calorieValue: {
-    fontSize: FontSize['4xl'],
-    fontWeight: '900',
-    color: Colors.textPrimary,
-    fontVariant: ['tabular-nums'],
-  },
-  calorieUnit: { fontSize: FontSize.sm, color: Colors.textSecondary },
-  caloriePercent: { fontSize: FontSize.xs, color: Colors.textMuted, fontStyle: 'italic', marginTop: 4 },
-  nutritionCard: { marginBottom: Spacing.base },
-  nutrientRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  },
-  nutrientLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  nutrientDot: { width: 10, height: 10, borderRadius: 5 },
-  nutrientLabel: { fontSize: FontSize.sm, color: Colors.textSecondary },
-  nutrientValue: { fontSize: FontSize.sm, fontWeight: '700', fontVariant: ['tabular-nums'] },
-  addButton: { marginTop: Spacing.base },
-});
+function makeStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    gradient: { flex: 1 },
+    headerBar: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: Spacing.base,
+      paddingTop: 52,
+      paddingBottom: Spacing.sm,
+    },
+    backBtn: { padding: 4 },
+    headerTitle: { fontSize: FontSize.base, fontWeight: '700', color: colors.text.primary },
+    content: { padding: Spacing.base, paddingBottom: 100 },
+    foodCard: { marginBottom: Spacing.base },
+    foodHeader: { flexDirection: 'row', gap: 16, alignItems: 'center' },
+    foodImage: { width: 64, height: 64, borderRadius: BorderRadius.md },
+    foodImagePlaceholder: {
+      width: 64,
+      height: 64,
+      borderRadius: BorderRadius.md,
+      backgroundColor: colors.surfaceElevated,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    foodInfo: { flex: 1 },
+    foodName: { fontSize: FontSize.base, fontWeight: '800', color: colors.text.primary },
+    foodBrand: { fontSize: FontSize.sm, color: colors.secondary, marginTop: 2 },
+    servingInfo: { fontSize: FontSize.xs, color: colors.text.muted, marginTop: 4 },
+    servingCard: { marginBottom: Spacing.base },
+    sectionTitle: {
+      fontSize: FontSize.xs,
+      fontWeight: '800',
+      color: colors.secondary,
+      letterSpacing: 2,
+      textTransform: 'uppercase',
+      marginBottom: Spacing.base,
+    },
+    servingControl: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+    servingBtn: {
+      width: 44,
+      height: 44,
+      backgroundColor: colors.primary,
+      borderRadius: BorderRadius.md,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    servingBtnText: { fontSize: FontSize.xl, fontWeight: '800', color: colors.text.onPrimary },
+    servingInputWrapper: { flex: 1, alignItems: 'center' },
+    servingInput: { marginBottom: 0, width: '100%' },
+    servingUnit: { fontSize: FontSize.xs, color: colors.text.muted, marginTop: 4 },
+    quickPortions: { flexDirection: 'row', gap: 8, marginTop: Spacing.sm },
+    portionChip: {
+      flex: 1,
+      paddingVertical: 8,
+      borderRadius: BorderRadius.md,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: 'center',
+    },
+    portionChipActive: { borderColor: colors.primaryLight, backgroundColor: colors.primaryGlow },
+    portionText: { fontSize: FontSize.sm, fontWeight: '700', color: colors.text.muted },
+    portionTextActive: { color: colors.primaryLight },
+    calorieCard: { marginBottom: Spacing.base, alignItems: 'center' },
+    calorieRow: { flexDirection: 'row', alignItems: 'baseline', gap: 8 },
+    calorieLabel: { fontSize: FontSize.xs, color: colors.text.muted, letterSpacing: 2 },
+    calorieValue: {
+      fontSize: FontSize['4xl'],
+      fontWeight: '900',
+      color: colors.text.primary,
+      fontVariant: ['tabular-nums'],
+    },
+    calorieUnit: { fontSize: FontSize.sm, color: colors.text.secondary },
+    caloriePercent: { fontSize: FontSize.xs, color: colors.text.muted, fontStyle: 'italic', marginTop: 4 },
+    nutritionCard: { marginBottom: Spacing.base },
+    nutrientRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingVertical: 8,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    nutrientLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+    nutrientDot: { width: 10, height: 10, borderRadius: 5 },
+    nutrientLabel: { fontSize: FontSize.sm, color: colors.text.secondary },
+    nutrientValue: { fontSize: FontSize.sm, fontWeight: '700', fontVariant: ['tabular-nums'] },
+    addButton: { marginTop: Spacing.base },
+  });
+}

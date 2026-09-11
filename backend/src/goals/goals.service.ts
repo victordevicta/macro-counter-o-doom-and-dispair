@@ -22,7 +22,7 @@ export class GoalsService {
     const profile = await this.prisma.userProfile.findUnique({ where: { userId } });
 
     if (!profile?.sex || !profile?.dateOfBirth || !profile?.heightCm || !profile?.currentWeight) {
-      return { message: 'Complete your profile first, wanderer.' };
+      return { message: 'Please complete your profile first.' };
     }
 
     const age = Math.floor(

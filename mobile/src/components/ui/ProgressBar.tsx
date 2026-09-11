@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
-import { Colors } from '../../theme/colors';
+import { useThemeColors } from '../../hooks/useTheme';
+import { ThemeColors } from '../../themes/types';
 import { BorderRadius } from '../../theme/spacing';
 import { FontSize } from '../../theme/typography';
 
@@ -19,14 +20,18 @@ interface ProgressBarProps {
 export const ProgressBar: React.FC<ProgressBarProps> = ({
   value,
   max,
-  color = Colors.primaryLight,
-  trackColor = Colors.surfaceElevated,
+  color,
+  trackColor,
   height = 8,
   showLabel,
   label,
   showValue,
   animated = true,
 }) => {
+  const colors = useThemeColors();
+  const styles = makeStyles(colors);
+  const resolvedColor = color ?? colors.primaryLight;
+  const resolvedTrackColor = trackColor ?? colors.surfaceElevated;
   const animatedWidth = useRef(new Animated.Value(0)).current;
   const percentage = Math.min((value / max) * 100, 100);
   const isOver = value > max;
@@ -44,7 +49,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
     }
   }, [percentage]);
 
-  const barColor = isOver ? Colors.errorLight : color;
+  const barColor = isOver ? colors.status.errorLight : resolvedColor;
 
   return (
     <View style={styles.container}>
@@ -58,7 +63,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
           )}
         </View>
       )}
-      <View style={[styles.track, { height, backgroundColor: trackColor }]}>
+      <View style={[styles.track, { height, backgroundColor: resolvedTrackColor }]}>
         <Animated.View
           style={[
             styles.fill,
@@ -77,24 +82,26 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: { width: '100%' },
-  track: { borderRadius: BorderRadius.full, overflow: 'hidden' },
-  fill: { borderRadius: BorderRadius.full },
-  labelRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 4,
-  },
-  label: {
-    fontSize: FontSize.xs,
-    color: Colors.textSecondary,
-    fontWeight: '500',
-  },
-  value: {
-    fontSize: FontSize.xs,
-    color: Colors.textSecondary,
-    fontVariant: ['tabular-nums'],
-  },
-  overValue: { color: Colors.errorLight },
-});
+function makeStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: { width: '100%' },
+    track: { borderRadius: BorderRadius.full, overflow: 'hidden' },
+    fill: { borderRadius: BorderRadius.full },
+    labelRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 4,
+    },
+    label: {
+      fontSize: FontSize.xs,
+      color: colors.text.secondary,
+      fontWeight: '500',
+    },
+    value: {
+      fontSize: FontSize.xs,
+      color: colors.text.secondary,
+      fontVariant: ['tabular-nums'],
+    },
+    overValue: { color: colors.status.errorLight },
+  });
+}

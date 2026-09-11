@@ -63,17 +63,3 @@ export interface WeekSummary {
   days: DaySummary[];
   weekTotal: NutritionTotals;
 }
-
-export const MEAL_LABELS: Record<MealType, string> = {
-  BREAKFAST: 'Dawn Rations',
-  LUNCH: 'Midday Sustenance',
-  DINNER: 'Nightly Feast',
-  SNACK: 'The Cursed Morsels',
-};
-
-export const MEAL_ICONS: Record<MealType, string> = {
-  BREAKFAST: '🌅',
-  LUNCH: '⚔️',
-  DINNER: '🍖',
-  SNACK: '💀',
-};

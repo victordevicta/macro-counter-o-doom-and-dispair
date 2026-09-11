@@ -1,0 +1,21 @@
+{
+  "headerTitle": "Diário",
+  "today": "Hoje",
+  "dailyTotals": "TOTAIS DO DIA",
+  "kcal": "kcal",
+  "proteinG": "Proteína (g)",
+  "carbsG": "Carboidratos (g)",
+  "fatG": "Gordura (g)",
+  "mealSection": {
+    "item_one": "{{count}} item",
+    "item_other": "{{count}} itens",
+    "addPrompt": "+ Adicionar alimento",
+    "mealTotal": "Total da Refeição"
+  },
+  "foodEntry": {
+    "deleteTitle": "Remover Item",
+    "deleteMessage": "Remover \"{{name}}\" do seu diário?",
+    "keepButton": "Manter",
+    "removeButton": "Remover"
+  }
+}

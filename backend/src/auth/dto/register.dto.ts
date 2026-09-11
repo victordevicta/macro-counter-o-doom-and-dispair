@@ -8,24 +8,20 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 
 export class RegisterDto {
-  @ApiProperty({ example: 'doomed_warrior' })
+  @ApiProperty({ example: 'jane_doe' })
   @IsString()
-  @MinLength(3)
-  @MaxLength(20)
-  @Matches(/^[a-zA-Z0-9_]+$/, {
-    message: 'Username can only contain letters, numbers and underscores',
-  })
+  @MaxLength(100)
   username: string;
 
-  @ApiProperty({ example: 'soul@doomvault.com' })
+  @ApiProperty({ example: 'jane@example.com' })
   @IsEmail()
   email: string;
 
-  @ApiProperty({ example: 'D00mP@ssw0rd!' })
+  @ApiProperty({ example: 'StrongPass1' })
   @IsString()
   @MinLength(8)
-  @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-    message: 'Password too weak. The darkness requires stronger credentials.',
+  @Matches(/^(?=.*\d)(?=.*[A-Z])(?=.*[a-z]).+$/, {
+    message: 'Password must contain an uppercase letter, a lowercase letter, and a number.',
   })
   password: string;
 }

@@ -1,3 +1,5 @@
+import { ShippedLocale } from '../i18n/languages';
+
 export interface ThemeColors {
   background: string;
   surface: string;
@@ -110,15 +112,28 @@ export interface CompanionConfig {
   textColor: string;
 }
 
-export interface AppTheme {
+/** What each theme file authors: per-locale content. */
+export interface AppThemeDefinition {
   id: string;
   name: string;
   displayName: string;
-  description: string;
+  description: Record<ShippedLocale, string>;
   emoji: string;
+  /** Ionicons base name (without "-outline") used for the Dashboard tab icon. */
+  dashboardIcon: string;
   tags: string[];
   locked: boolean;
   colors: ThemeColors;
+  messages: Record<ShippedLocale, ThemeMessages>;
+  companion: Omit<CompanionConfig, 'title' | 'description'> & {
+    title: Record<ShippedLocale, string>;
+    description: Record<ShippedLocale, string>;
+  };
+}
+
+/** What consumers get back at runtime, resolved to a single locale. */
+export interface AppTheme extends Omit<AppThemeDefinition, 'messages' | 'description' | 'companion'> {
+  description: string;
   messages: ThemeMessages;
   companion: CompanionConfig;
 }

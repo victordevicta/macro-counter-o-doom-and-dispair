@@ -31,10 +31,10 @@ export class WeightService {
     const log = await this.prisma.weightLog.findFirst({
       where: { id: logId, userId },
     });
-    if (!log) throw new NotFoundException('Weight log perished.');
+    if (!log) throw new NotFoundException('Weight log not found.');
 
     await this.prisma.weightLog.delete({ where: { id: logId } });
-    return { message: 'The measurement has been erased from time.' };
+    return { message: 'Weight log deleted.' };
   }
 
   async getProgress(userId: string) {

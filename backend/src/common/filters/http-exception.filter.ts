@@ -25,7 +25,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const message =
       exception instanceof HttpException
         ? exception.getResponse()
-        : 'The darkness has claimed your request.';
+        : 'An unexpected error occurred.';
 
     this.logger.error(
       `${request.method} ${request.url} - ${status}`,
@@ -40,19 +40,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
         typeof message === 'object' && 'message' in (message as object)
           ? (message as any).message
           : message,
-      doom: this.getDoomQuote(status),
     });
-  }
-
-  private getDoomQuote(status: number): string {
-    const quotes = {
-      400: 'Your request is corrupted, mortal.',
-      401: 'The gates are sealed. Authentication required.',
-      403: 'You dare enter without permission? The curse grows stronger.',
-      404: 'Lost in the abyss. The resource perishes.',
-      429: 'Too many summons. The rift overwhelms.',
-      500: 'The realm collapses. Internal despair detected.',
-    };
-    return quotes[status] || 'The void consumes all.';
   }
 }

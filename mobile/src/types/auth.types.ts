@@ -3,6 +3,10 @@ export interface AuthTokens {
   refreshToken: string;
 }
 
+export interface RegisterResponse {
+  message: string;
+}
+
 export interface User {
   id: string;
   email: string;

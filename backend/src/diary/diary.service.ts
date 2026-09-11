@@ -45,7 +45,7 @@ export class DiaryService {
 
   async addFoodEntry(userId: string, dto: AddFoodEntryDto) {
     const food = await this.prisma.food.findUnique({ where: { id: dto.foodId } });
-    if (!food) throw new NotFoundException('Food not found in the void.');
+    if (!food) throw new NotFoundException('Food not found.');
 
     const servingSize = dto.servingSize ?? food.servingSize;
     const ratio = (servingSize * dto.servings) / food.servingSize;
@@ -76,7 +76,7 @@ export class DiaryService {
       include: { food: true },
     });
 
-    if (!entry) throw new NotFoundException('Entry has perished from the diary.');
+    if (!entry) throw new NotFoundException('Entry not found.');
 
     const servings = dto.servings ?? entry.servings;
     const servingSize = dto.servingSize ?? entry.servingSize;
@@ -106,7 +106,7 @@ export class DiaryService {
     if (!entry) throw new NotFoundException('Entry not found.');
 
     await this.prisma.foodEntry.delete({ where: { id: entryId } });
-    return { message: 'The morsel has been purged from the record.' };
+    return { message: 'Entry deleted.' };
   }
 
   async getWeekSummary(userId: string, startDate: string) {
@@ -143,7 +143,7 @@ export class DiaryService {
     });
 
     if (!sourceEntries.length) {
-      throw new NotFoundException('No entries found to copy from the past.');
+      throw new NotFoundException('No entries found to copy.');
     }
 
     const newEntries = await Promise.all(

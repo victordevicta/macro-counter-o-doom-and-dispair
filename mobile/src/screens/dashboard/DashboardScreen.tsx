@@ -10,9 +10,12 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../store/authStore';
 import { useDiaryStore } from '../../store/diaryStore';
+import { useLanguageStore } from '../../store/languageStore';
 import { useTheme } from '../../hooks/useTheme';
+import { getDateFnsLocale } from '../../i18n/dateLocale';
 import { ThemeColors } from '../../themes/types';
 import { CalorieRing } from '../../components/dashboard/CalorieRing';
 import { MacroSummary } from '../../components/dashboard/MacroSummary';
@@ -32,6 +35,9 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
   const { diary, isLoading, fetchDiary } = useDiaryStore();
   const theme = useTheme();
   const { colors, messages } = theme;
+  const { t } = useTranslation('dashboard');
+  const { languageId } = useLanguageStore();
+  const dateLocale = getDateFnsLocale(languageId);
 
   const today = format(new Date(), 'yyyy-MM-dd');
 
@@ -61,7 +67,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
 
   return (
     <LinearGradient colors={colors.gradient as any} style={styles.gradient}>
-      <StatusBar barStyle={theme.id === 'clean' ? 'dark-content' : 'light-content'} />
+      <StatusBar barStyle="light-content" />
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.content}
@@ -80,12 +86,12 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
           <View>
             <Text style={styles.screenTitle}>{messages.dashboardTitle}</Text>
             <Text style={styles.username}>
-              {profile?.firstName || user?.username || 'Wanderer'}
+              {profile?.firstName || user?.username || t('usernameFallback')}
             </Text>
           </View>
           <View style={[styles.dateChip, { backgroundColor: colors.primaryDark, borderColor: colors.primary }]}>
             <Text style={[styles.dateText, { color: colors.text.onPrimary }]}>
-              {format(new Date(), 'MMM d')}
+              {format(new Date(), 'MMM d', { locale: dateLocale })}
             </Text>
           </View>
         </View>
@@ -123,10 +129,10 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
           <View style={styles.microGrid}>
             <View style={styles.microItem}>
               <Text style={styles.microValue}>{Math.round(totals.sodiumMg)}</Text>
-              <Text style={styles.microUnit}>mg Sodium</Text>
+              <Text style={styles.microUnit}>mg {t('sodium')}</Text>
               {sodiumPct > 100 && (
                 <Text style={[styles.microAlert, { color: colors.status.errorLight }]}>
-                  ⚠️ Over limit
+                  ⚠️ {t('overLimit')}
                 </Text>
               )}
             </View>
@@ -168,7 +174,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
               <Text style={styles.statValue}>
                 {Object.values(diary?.meals || {}).flat().length}
               </Text>
-              <Text style={[styles.statLabel, { color: colors.text.muted }]}>Items Logged</Text>
+              <Text style={[styles.statLabel, { color: colors.text.muted }]}>{t('itemsLogged')}</Text>
             </View>
             <View style={styles.statItem}>
               <Text style={styles.statValue}>
@@ -178,7 +184,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
               </Text>
               <Text style={[styles.statLabel, { color: colors.text.muted }]}>
                 {diary?.remaining?.calories != null && totals.calories > calorieGoal
-                  ? 'kcal Over'
+                  ? t('kcalOver')
                   : messages.remainingLabel.slice(0, 8)}
               </Text>
             </View>
@@ -192,7 +198,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
                     : 0
                 )}%
               </Text>
-              <Text style={[styles.statLabel, { color: colors.text.muted }]}>From Protein</Text>
+              <Text style={[styles.statLabel, { color: colors.text.muted }]}>{t('fromProtein')}</Text>
             </View>
           </View>
         </Card>

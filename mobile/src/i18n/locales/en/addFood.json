@@ -1,0 +1,25 @@
+{
+  "headerTitle": "Add to {{meal}}",
+  "servingPer": "Per {{size}}{{unit}}",
+  "portion": {
+    "sectionTitle": "SERVING SIZE"
+  },
+  "nutrition": {
+    "sectionTitle": "NUTRITION FACTS",
+    "protein": "Protein",
+    "carbs": "Carbohydrates",
+    "fat": "Fat",
+    "fiber": "Fiber",
+    "sodium": "Sodium"
+  },
+  "totalCalories": "TOTAL CALORIES",
+  "percentOfDaily": "{{percent}}% of your daily goal",
+  "addButton": "ADD TO {{meal}}",
+  "addingButton": "Adding...",
+  "alerts": {
+    "invalidTitle": "Invalid Amount",
+    "invalidMessage": "The serving size must be greater than zero.",
+    "failedTitle": "Failed",
+    "failedFallback": "Couldn't add this entry."
+  }
+}

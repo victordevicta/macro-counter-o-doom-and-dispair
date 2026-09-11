@@ -8,10 +8,12 @@ import {
   SafeAreaView,
   StatusBar,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useThemeStore } from '../../store/themeStore';
+import { useLanguageStore } from '../../store/languageStore';
 import { useTheme } from '../../hooks/useTheme';
-import { ALL_THEMES, AppTheme } from '../../themes';
+import { getAllThemesResolved, AppTheme } from '../../themes';
 
 interface Props {
   onBack: () => void;
@@ -84,22 +86,24 @@ const ThemeCard: React.FC<{
 };
 
 export const ThemeSelectScreen: React.FC<Props> = ({ onBack }) => {
+  const { t } = useTranslation('settings');
   const activeTheme = useTheme();
   const { themeId, setTheme } = useThemeStore();
+  const { languageId } = useLanguageStore();
   const colors = activeTheme.colors;
-  const messages = activeTheme.messages;
+  const allThemes = getAllThemesResolved(languageId);
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
-      <StatusBar barStyle={activeTheme.id === 'clean' ? 'dark-content' : 'light-content'} />
+      <StatusBar barStyle="light-content" />
       <LinearGradient colors={colors.gradient as any} style={styles.gradient}>
         {/* Header */}
         <View style={[styles.header, { borderBottomColor: colors.border }]}>
           <TouchableOpacity onPress={onBack} style={styles.backBtn}>
-            <Text style={[styles.backText, { color: colors.primary }]}>← Back</Text>
+            <Text style={[styles.backText, { color: colors.primary }]}>← {t('common:back', { defaultValue: 'Back' })}</Text>
           </TouchableOpacity>
           <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
-            {messages.settingsTitle}
+            {t('skins.sectionTitle')}
           </Text>
           <View style={{ width: 60 }} />
         </View>
@@ -109,13 +113,13 @@ export const ThemeSelectScreen: React.FC<Props> = ({ onBack }) => {
           showsVerticalScrollIndicator={false}
         >
           <Text style={[styles.sectionTitle, { color: colors.text.secondary }]}>
-            CHOOSE YOUR SKIN
+            {t('skins.sectionTitle')}
           </Text>
           <Text style={[styles.sectionSub, { color: colors.text.muted }]}>
-            Each skin changes the entire experience — colors, messages, companion, and personality.
+            {t('skins.sectionSubtitle')}
           </Text>
 
-          {ALL_THEMES.map((theme) => (
+          {allThemes.map((theme) => (
             <ThemeCard
               key={theme.id}
               theme={theme}

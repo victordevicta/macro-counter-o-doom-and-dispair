@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { DashboardScreen } from '../screens/dashboard/DashboardScreen';
 import { DiaryScreen } from '../screens/diary/DiaryScreen';
 import { SearchScreen } from '../screens/search/SearchScreen';
@@ -10,6 +11,7 @@ import { BarcodeScannerScreen } from '../screens/barcode/BarcodeScannerScreen';
 import { ProgressScreen } from '../screens/progress/ProgressScreen';
 import { ProfileScreen } from '../screens/profile/ProfileScreen';
 import { ThemeSelectScreen } from '../screens/settings/ThemeSelectScreen';
+import { LanguageSelectScreen } from '../screens/settings/LanguageSelectScreen';
 import { useTheme } from '../hooks/useTheme';
 import { MealType } from '../types/diary.types';
 import { Food } from '../types/food.types';
@@ -21,12 +23,15 @@ type AppFlow =
   | { screen: 'search'; mealType: MealType }
   | { screen: 'barcode'; mealType?: MealType }
   | { screen: 'addFood'; food: Food; mealType: MealType }
-  | { screen: 'themeSelect' };
+  | { screen: 'themeSelect' }
+  | { screen: 'languageSelect' };
 
 export const TabNavigator: React.FC = () => {
   const [flow, setFlow] = useState<AppFlow>({ screen: 'tabs' });
   const theme = useTheme();
   const { colors, messages } = theme;
+  const { t } = useTranslation('settings');
+  const insets = useSafeAreaInsets();
 
   const handleAddFood = (mealType: MealType) => setFlow({ screen: 'search', mealType });
   const handleFoodSelected = (food: Food, mealType: MealType) => setFlow({ screen: 'addFood', food, mealType });
@@ -38,6 +43,9 @@ export const TabNavigator: React.FC = () => {
 
   if (flow.screen === 'themeSelect') {
     return <ThemeSelectScreen onBack={() => setFlow({ screen: 'tabs' })} />;
+  }
+  if (flow.screen === 'languageSelect') {
+    return <LanguageSelectScreen onBack={() => setFlow({ screen: 'tabs' })} />;
   }
   if (flow.screen === 'search') {
     return (
@@ -76,8 +84,8 @@ export const TabNavigator: React.FC = () => {
           borderTopColor: colors.border,
           borderTopWidth: 1,
           paddingTop: 6,
-          paddingBottom: 4,
-          height: 70,
+          paddingBottom: 4 + insets.bottom,
+          height: 70 + insets.bottom,
         },
         tabBarActiveTintColor: colors.tabBarActive,
         tabBarInactiveTintColor: colors.tabBarInactive,
@@ -89,11 +97,12 @@ export const TabNavigator: React.FC = () => {
         },
         tabBarIcon: ({ color, size, focused }) => {
           const icons: Record<string, { focused: string; outline: string }> = {
-            Dashboard: { focused: 'skull', outline: 'skull-outline' },
+            Dashboard: { focused: theme.dashboardIcon, outline: `${theme.dashboardIcon}-outline` },
             Diary: { focused: 'book', outline: 'book-outline' },
             Progress: { focused: 'trending-up', outline: 'trending-up-outline' },
             Profile: { focused: 'person', outline: 'person-outline' },
             Skins: { focused: 'color-palette', outline: 'color-palette-outline' },
+            Language: { focused: 'language', outline: 'language-outline' },
           };
           const icon = icons[route.name];
           return (
@@ -134,7 +143,12 @@ export const TabNavigator: React.FC = () => {
       <Tab.Screen
         name="Skins"
         children={() => <ThemeSelectScreen onBack={() => {}} />}
-        options={{ tabBarLabel: 'Skins' }}
+        options={{ tabBarLabel: t('tabLabels.skins') }}
+      />
+      <Tab.Screen
+        name="Language"
+        children={() => <LanguageSelectScreen onBack={() => {}} />}
+        options={{ tabBarLabel: t('tabLabels.language') }}
       />
     </Tab.Navigator>
   );

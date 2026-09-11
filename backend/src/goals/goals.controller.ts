@@ -13,19 +13,19 @@ export class GoalsController {
   constructor(private readonly goalsService: GoalsService) {}
 
   @Get()
-  @ApiOperation({ summary: 'View the ordained nutritional decree' })
+  @ApiOperation({ summary: 'Get nutrition goals' })
   getGoals(@CurrentUser('id') userId: string) {
     return this.goalsService.getGoals(userId);
   }
 
   @Put()
-  @ApiOperation({ summary: 'Alter the nutritional decree' })
+  @ApiOperation({ summary: 'Update nutrition goals' })
   updateGoals(@CurrentUser('id') userId: string, @Body() dto: UpdateGoalsDto) {
     return this.goalsService.updateGoals(userId, dto);
   }
 
   @Post('reset')
-  @ApiOperation({ summary: 'Recalculate from mortal metrics' })
+  @ApiOperation({ summary: 'Recalculate goals from profile metrics' })
   resetToCalculated(@CurrentUser('id') userId: string) {
     return this.goalsService.resetToCalculated(userId);
   }

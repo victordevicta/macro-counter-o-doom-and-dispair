@@ -80,7 +80,7 @@ export class FoodsService {
       (offResult.status === 'fulfilled' && offResult.value);
 
     if (!foodData) {
-      throw new NotFoundException('The barcode leads to the void. No food found.');
+      throw new NotFoundException('No food found for this barcode.');
     }
 
     const saved = await this.prisma.food.create({ data: { ...foodData, barcode } });
@@ -89,7 +89,7 @@ export class FoodsService {
 
   async getFoodById(id: string, userId: string) {
     const food = await this.prisma.food.findUnique({ where: { id } });
-    if (!food) throw new NotFoundException('Food perished from existence.');
+    if (!food) throw new NotFoundException('Food not found.');
 
     const isFavorite = !!(await this.prisma.favoriteFood.findUnique({
       where: { userId_foodId: { userId, foodId: id } },
@@ -113,11 +113,11 @@ export class FoodsService {
       await this.prisma.favoriteFood.delete({
         where: { userId_foodId: { userId, foodId } },
       });
-      return { isFavorite: false, message: 'Removed from the sacred tome.' };
+      return { isFavorite: false, message: 'Removed from favorites.' };
     }
 
     await this.prisma.favoriteFood.create({ data: { userId, foodId } });
-    return { isFavorite: true, message: 'Added to the sacred tome.' };
+    return { isFavorite: true, message: 'Added to favorites.' };
   }
 
   async getFavorites(userId: string) {

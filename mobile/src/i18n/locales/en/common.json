@@ -1,0 +1,26 @@
+{
+  "back": "Back",
+  "next": "Next",
+  "cancel": "Cancel",
+  "ok": "OK",
+  "save": "Save",
+  "or": "OR",
+  "of": "of",
+  "loading": "Loading...",
+  "genericErrorTitle": "Something went wrong",
+  "genericErrorMessage": "Please try again.",
+  "networkErrorMessage": "Couldn't connect. Check your internet connection.",
+  "units": {
+    "kcal": "kcal",
+    "g": "g",
+    "mg": "mg",
+    "kg": "kg",
+    "cm": "cm"
+  },
+  "macros": {
+    "protein": "PROTEIN",
+    "carbs": "CARBS",
+    "fat": "FAT",
+    "fiber": "FIBER"
+  }
+}

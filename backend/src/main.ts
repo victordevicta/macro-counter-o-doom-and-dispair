@@ -1,16 +1,24 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import helmet from 'helmet';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
   const app = await NestFactory.create(AppModule);
 
+  app.use(helmet());
+
   app.setGlobalPrefix('api/v1');
 
+  const extraOrigins = (process.env.CORS_ORIGINS || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
   app.enableCors({
-    origin: ['http://localhost:3001', 'http://localhost:8081', 'exp://'],
+    origin: ['http://localhost:3001', 'http://localhost:8081', 'exp://', ...extraOrigins],
     credentials: true,
   });
 
@@ -23,27 +31,27 @@ async function bootstrap() {
     }),
   );
 
-  const config = new DocumentBuilder()
-    .setTitle("Macro Counter O' Doom and Dispair API")
-    .setDescription('The dark tome of nutritional suffering — REST API')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .build();
+  if (process.env.NODE_ENV !== 'production') {
+    const config = new DocumentBuilder()
+      .setTitle('Macro Counter API')
+      .setDescription('Nutrition tracking REST API')
+      .setVersion('1.0')
+      .addBearerAuth()
+      .build();
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document, {
-    customSiteTitle: "Macro Counter O' Doom — API Docs",
-    customCss: `
-      body { background: #0A0A0F; color: #E8D5C4; }
-      .swagger-ui { background: #0A0A0F; }
-    `,
-  });
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api/docs', app, document, {
+      customSiteTitle: 'Macro Counter — API Docs',
+    });
+  }
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
 
-  logger.log(`🩸 The sanctum awakens on port ${port}`);
-  logger.log(`📜 API Docs: http://localhost:${port}/api/docs`);
+  logger.log(`Server started on port ${port}`);
+  if (process.env.NODE_ENV !== 'production') {
+    logger.log(`API Docs: http://localhost:${port}/api/docs`);
+  }
 }
 
 bootstrap();

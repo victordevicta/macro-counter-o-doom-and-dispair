@@ -23,7 +23,7 @@ export class DiaryController {
   constructor(private readonly diaryService: DiaryService) {}
 
   @Get()
-  @ApiOperation({ summary: 'View the dark tome for a day' })
+  @ApiOperation({ summary: 'Get the diary for a day' })
   getDailyDiary(
     @CurrentUser('id') userId: string,
     @Query('date') date: string,
@@ -33,7 +33,7 @@ export class DiaryController {
   }
 
   @Get('week')
-  @ApiOperation({ summary: 'View a week of suffering' })
+  @ApiOperation({ summary: 'Get a week summary' })
   getWeekSummary(
     @CurrentUser('id') userId: string,
     @Query('startDate') startDate: string,
@@ -43,7 +43,7 @@ export class DiaryController {
   }
 
   @Post('entries')
-  @ApiOperation({ summary: 'Inscribe sustenance into the tome' })
+  @ApiOperation({ summary: 'Add a food entry' })
   addFoodEntry(
     @CurrentUser('id') userId: string,
     @Body() dto: AddFoodEntryDto,
@@ -52,7 +52,7 @@ export class DiaryController {
   }
 
   @Put('entries/:id')
-  @ApiOperation({ summary: 'Alter the cursed inscription' })
+  @ApiOperation({ summary: 'Update a food entry' })
   updateFoodEntry(
     @CurrentUser('id') userId: string,
     @Param('id') entryId: string,
@@ -62,7 +62,7 @@ export class DiaryController {
   }
 
   @Delete('entries/:id')
-  @ApiOperation({ summary: 'Purge the morsel from record' })
+  @ApiOperation({ summary: 'Delete a food entry' })
   deleteFoodEntry(
     @CurrentUser('id') userId: string,
     @Param('id') entryId: string,
@@ -71,7 +71,7 @@ export class DiaryController {
   }
 
   @Post('copy-meal')
-  @ApiOperation({ summary: 'Copy a cursed meal from another day' })
+  @ApiOperation({ summary: 'Copy a meal from another day' })
   copyMeal(
     @CurrentUser('id') userId: string,
     @Body()

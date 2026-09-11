@@ -1,0 +1,21 @@
+{
+  "title": "Leitor de Código de Barras",
+  "permission": {
+    "title": "Acesso à Câmera Necessário",
+    "message": "Precisamos da câmera para ler códigos de barras.",
+    "grantButton": "PERMITIR ACESSO",
+    "backLink": "← Voltar"
+  },
+  "instructions": {
+    "align": "Alinhe o código de barras no quadro",
+    "retry": "Falha na leitura. Tentar de novo?",
+    "retryButton": "ESCANEAR NOVAMENTE"
+  },
+  "loadingText": "Buscando produto...",
+  "alerts": {
+    "title": "Falha na Leitura",
+    "fallbackMessage": "Não foi possível encontrar este código.",
+    "scanAgain": "Escanear Novamente",
+    "goBack": "Voltar"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "headerTitle": "Adicionar em {{meal}}",
+  "servingPer": "Por {{size}}{{unit}}",
+  "portion": {
+    "sectionTitle": "TAMANHO DA PORÇÃO"
+  },
+  "nutrition": {
+    "sectionTitle": "INFORMAÇÃO NUTRICIONAL",
+    "protein": "Proteína",
+    "carbs": "Carboidratos",
+    "fat": "Gordura",
+    "fiber": "Fibra",
+    "sodium": "Sódio"
+  },
+  "totalCalories": "CALORIAS TOTAIS",
+  "percentOfDaily": "{{percent}}% da sua meta diária",
+  "addButton": "ADICIONAR EM {{meal}}",
+  "addingButton": "Adicionando...",
+  "alerts": {
+    "invalidTitle": "Quantidade Inválida",
+    "invalidMessage": "A porção precisa ser maior que zero.",
+    "failedTitle": "Falha",
+    "failedFallback": "Não foi possível adicionar este item."
+  }
+}

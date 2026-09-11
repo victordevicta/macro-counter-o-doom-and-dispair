@@ -7,9 +7,11 @@ import {
   Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../../theme/colors';
+import { useTranslation } from 'react-i18next';
+import { useThemeColors } from '../../hooks/useTheme';
+import { ThemeColors } from '../../themes/types';
 import { FontSize } from '../../theme/typography';
-import { BorderRadius, Spacing } from '../../theme/spacing';
+import { Spacing } from '../../theme/spacing';
 import { FoodEntry } from '../../types/diary.types';
 
 interface FoodEntryItemProps {
@@ -23,14 +25,18 @@ export const FoodEntryItem: React.FC<FoodEntryItemProps> = ({
   onDelete,
   onEdit,
 }) => {
+  const { t } = useTranslation('diary');
+  const colors = useThemeColors();
+  const styles = makeStyles(colors);
+
   const handleDelete = () => {
     Alert.alert(
-      'Purge from Record',
-      `Remove "${entry.food.name}" from the dark tome?`,
+      t('foodEntry.deleteTitle'),
+      t('foodEntry.deleteMessage', { name: entry.food.name }),
       [
-        { text: 'Spare It', style: 'cancel' },
+        { text: t('foodEntry.keepButton'), style: 'cancel' },
         {
-          text: 'Purge',
+          text: t('foodEntry.removeButton'),
           style: 'destructive',
           onPress: onDelete,
         },
@@ -53,68 +59,70 @@ export const FoodEntryItem: React.FC<FoodEntryItemProps> = ({
       </View>
       <View style={styles.right}>
         <View style={styles.macros}>
-          <Text style={[styles.macroChip, { color: Colors.protein }]}>
+          <Text style={[styles.macroChip, { color: colors.macros.protein }]}>
             {Math.round(entry.proteinG)}P
           </Text>
-          <Text style={[styles.macroChip, { color: Colors.carbs }]}>
+          <Text style={[styles.macroChip, { color: colors.macros.carbs }]}>
             {Math.round(entry.carbsG)}C
           </Text>
-          <Text style={[styles.macroChip, { color: Colors.fat }]}>
+          <Text style={[styles.macroChip, { color: colors.macros.fat }]}>
             {Math.round(entry.fatG)}F
           </Text>
         </View>
         <Text style={styles.calories}>{Math.round(entry.calories)}</Text>
-        <Text style={styles.kcal}>kcal</Text>
+        <Text style={styles.kcal}>{t('kcal')}</Text>
         <TouchableOpacity
           onPress={handleDelete}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           style={styles.deleteBtn}
         >
-          <Ionicons name="trash-outline" size={16} color={Colors.textMuted} />
+          <Ionicons name="trash-outline" size={16} color={colors.text.muted} />
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: Spacing.base,
-    paddingVertical: Spacing.sm,
-    borderTopWidth: 1,
-    borderTopColor: Colors.border,
-  },
-  left: { flex: 1, marginRight: 8 },
-  name: {
-    fontSize: FontSize.sm,
-    fontWeight: '600',
-    color: Colors.textPrimary,
-  },
-  serving: {
-    fontSize: FontSize.xs,
-    color: Colors.textMuted,
-    marginTop: 2,
-  },
-  right: {
-    alignItems: 'flex-end',
-    gap: 2,
-  },
-  macros: { flexDirection: 'row', gap: 6 },
-  macroChip: {
-    fontSize: FontSize.xs,
-    fontWeight: '700',
-  },
-  calories: {
-    fontSize: FontSize.base,
-    fontWeight: '800',
-    color: Colors.textPrimary,
-    fontVariant: ['tabular-nums'],
-  },
-  kcal: {
-    fontSize: FontSize.xs,
-    color: Colors.textMuted,
-  },
-  deleteBtn: { marginTop: 2 },
-});
+function makeStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: Spacing.base,
+      paddingVertical: Spacing.sm,
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+    },
+    left: { flex: 1, marginRight: 8 },
+    name: {
+      fontSize: FontSize.sm,
+      fontWeight: '600',
+      color: colors.text.primary,
+    },
+    serving: {
+      fontSize: FontSize.xs,
+      color: colors.text.muted,
+      marginTop: 2,
+    },
+    right: {
+      alignItems: 'flex-end',
+      gap: 2,
+    },
+    macros: { flexDirection: 'row', gap: 6 },
+    macroChip: {
+      fontSize: FontSize.xs,
+      fontWeight: '700',
+    },
+    calories: {
+      fontSize: FontSize.base,
+      fontWeight: '800',
+      color: colors.text.primary,
+      fontVariant: ['tabular-nums'],
+    },
+    kcal: {
+      fontSize: FontSize.xs,
+      color: colors.text.muted,
+    },
+    deleteBtn: { marginTop: 2 },
+  });
+}

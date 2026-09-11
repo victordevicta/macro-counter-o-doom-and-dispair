@@ -1,0 +1,34 @@
+{
+  "title": "Progresso",
+  "subtitle": "Acompanhe suas mudanças ao longo do tempo.",
+  "currentForm": {
+    "sectionTitle": "ESTATÍSTICAS ATUAIS",
+    "bodyFat": "Gordura Corporal",
+    "kgChange": "Variação (kg)"
+  },
+  "trend": {
+    "down": "Em queda",
+    "up": "Em alta",
+    "stable": "Estável"
+  },
+  "logButton": "+ REGISTRAR PESO DE HOJE",
+  "measureVessel": {
+    "sectionTitle": "REGISTRAR PESO",
+    "weightLabel": "PESO (kg)",
+    "bodyFatLabel": "GORDURA CORPORAL %",
+    "notesLabel": "NOTAS (opcional)",
+    "notesPlaceholder": "Manhã, pós-treino...",
+    "recordButton": "SALVAR REGISTRO",
+    "recordingButton": "Salvando..."
+  },
+  "chronicle": {
+    "sectionTitle": "HISTÓRICO",
+    "empty": "Nenhum registro ainda. Registre sua primeira pesagem."
+  },
+  "alerts": {
+    "failedTitle": "Falha",
+    "failedFallback": "Não foi possível salvar este registro.",
+    "invalidTitle": "Inválido",
+    "invalidMessage": "Digite um peso válido em kg."
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "tabLabels": {
+    "skins": "Skins",
+    "language": "Idioma"
+  },
+  "skins": {
+    "sectionTitle": "ESCOLHA SUA SKIN",
+    "sectionSubtitle": "Cada skin muda toda a experiência — cores, mensagens e companheiro."
+  },
+  "language": {
+    "sectionTitle": "ESCOLHA SEU IDIOMA",
+    "sectionSubtitle": "Selecione o idioma que deseja usar no aplicativo.",
+    "comingSoon": "Em Breve"
+  }
+}

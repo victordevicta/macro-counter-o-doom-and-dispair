@@ -1,0 +1,19 @@
+{
+  "title": "Search Foods",
+  "subtitleFor": "for {{meal}}",
+  "searchPlaceholder": "Search for a food...",
+  "tabs": {
+    "recent": "Recent",
+    "favorites": "Favorites",
+    "results": "Results"
+  },
+  "loadingText": "Searching...",
+  "kcal": "kcal",
+  "empty": {
+    "favoritesTitle": "No favorites yet.",
+    "recentTitle": "No recent foods.",
+    "searchTitle": "No results found.",
+    "searchHintShort": "Type at least 2 characters to search.",
+    "searchHintDefault": "Try searching for a food."
+  }
+}

@@ -11,8 +11,9 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { Platform } from 'react-native';
-import { Colors } from '../../theme/colors';
-import { BorderRadius, Shadow } from '../../theme/spacing';
+import { useThemeColors } from '../../hooks/useTheme';
+import { ThemeColors } from '../../themes/types';
+import { BorderRadius } from '../../theme/spacing';
 import { FontSize } from '../../theme/typography';
 
 interface ButtonProps {
@@ -42,6 +43,9 @@ export const Button: React.FC<ButtonProps> = ({
   textStyle,
   fullWidth,
 }) => {
+  const colors = useThemeColors();
+  const styles = makeStyles(colors);
+
   const handlePress = async () => {
     if (Platform.OS !== 'web') {
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -72,13 +76,13 @@ export const Button: React.FC<ButtonProps> = ({
         activeOpacity={0.8}
       >
         <LinearGradient
-          colors={isDisabled ? ['#3A1A1A', '#2A0A0A'] : ['#C62828', '#8B1A1A']}
+          colors={isDisabled ? [colors.border, colors.borderLight] : [colors.primaryLight, colors.primary]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={[styles.gradient, sizeStyles[size], styles.row]}
         >
           {isLoading ? (
-            <ActivityIndicator color={Colors.textPrimary} size="small" />
+            <ActivityIndicator color={colors.text.onPrimary} size="small" />
           ) : (
             <>
               {leftIcon && <View style={styles.iconLeft}>{leftIcon}</View>}
@@ -102,13 +106,13 @@ export const Button: React.FC<ButtonProps> = ({
         activeOpacity={0.8}
       >
         <LinearGradient
-          colors={isDisabled ? ['#3A2A1A', '#2A1A0A'] : ['#DAA520', '#C9A84C']}
+          colors={isDisabled ? [colors.border, colors.borderLight] : [colors.secondaryLight, colors.secondary]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={[styles.gradient, sizeStyles[size], styles.row]}
         >
           {isLoading ? (
-            <ActivityIndicator color={Colors.background} size="small" />
+            <ActivityIndicator color={colors.background} size="small" />
           ) : (
             <>
               {leftIcon && <View style={styles.iconLeft}>{leftIcon}</View>}
@@ -142,7 +146,7 @@ export const Button: React.FC<ButtonProps> = ({
       activeOpacity={0.7}
     >
       {isLoading ? (
-        <ActivityIndicator color={Colors.textPrimary} size="small" />
+        <ActivityIndicator color={colors.text.primary} size="small" />
       ) : (
         <>
           {leftIcon && <View style={styles.iconLeft}>{leftIcon}</View>}
@@ -165,23 +169,25 @@ export const Button: React.FC<ButtonProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  touchable: { borderRadius: BorderRadius.lg, overflow: 'hidden' },
-  gradient: { borderRadius: BorderRadius.lg, alignItems: 'center', justifyContent: 'center' },
-  base: { borderRadius: BorderRadius.lg, alignItems: 'center', justifyContent: 'center' },
-  row: { flexDirection: 'row' },
-  fullWidth: { width: '100%' },
-  secondary: { backgroundColor: Colors.surfaceElevated },
-  outline: { borderWidth: 1.5, borderColor: Colors.primaryLight, backgroundColor: 'transparent' },
-  ghost: { backgroundColor: 'transparent' },
-  danger: { backgroundColor: Colors.error },
-  disabled: { opacity: 0.5 },
-  text: { fontWeight: '700', color: Colors.textPrimary, letterSpacing: 0.3 },
-  textPrimary: { color: '#F0E8E0' },
-  textDark: { color: '#0A0A0F' },
-  textOutline: { color: Colors.primaryLight },
-  textGhost: { color: Colors.textSecondary },
-  textDanger: { color: '#FFD0D0' },
-  iconLeft: { marginRight: 8 },
-  iconRight: { marginLeft: 8 },
-});
+function makeStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    touchable: { borderRadius: BorderRadius.lg, overflow: 'hidden' },
+    gradient: { borderRadius: BorderRadius.lg, alignItems: 'center', justifyContent: 'center' },
+    base: { borderRadius: BorderRadius.lg, alignItems: 'center', justifyContent: 'center' },
+    row: { flexDirection: 'row' },
+    fullWidth: { width: '100%' },
+    secondary: { backgroundColor: colors.surfaceElevated },
+    outline: { borderWidth: 1.5, borderColor: colors.primaryLight, backgroundColor: 'transparent' },
+    ghost: { backgroundColor: 'transparent' },
+    danger: { backgroundColor: colors.status.error },
+    disabled: { opacity: 0.5 },
+    text: { fontWeight: '700', color: colors.text.primary, letterSpacing: 0.3 },
+    textPrimary: { color: colors.text.onPrimary },
+    textDark: { color: colors.background },
+    textOutline: { color: colors.primaryLight },
+    textGhost: { color: colors.text.secondary },
+    textDanger: { color: colors.status.errorLight },
+    iconLeft: { marginRight: 8 },
+    iconRight: { marginLeft: 8 },
+  });
+}

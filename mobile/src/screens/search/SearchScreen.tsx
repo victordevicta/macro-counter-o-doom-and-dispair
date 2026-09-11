@@ -11,9 +11,11 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { useQuery } from '@tanstack/react-query';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { foodsApi } from '../../api/foods.api';
 import { Input } from '../../components/ui/Input';
-import { Colors } from '../../theme/colors';
+import { useThemeColors, useThemeMessages } from '../../hooks/useTheme';
+import { ThemeColors } from '../../themes/types';
 import { FontSize } from '../../theme/typography';
 import { Spacing, BorderRadius } from '../../theme/spacing';
 import { Food } from '../../types/food.types';
@@ -30,11 +32,15 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({
   onFoodSelected,
   onScanBarcode,
 }) => {
+  const { t } = useTranslation('search');
+  const colors = useThemeColors();
+  const messages = useThemeMessages();
+  const styles = makeStyles(colors);
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'search' | 'recent' | 'favorites'>('recent');
 
-  const debounceRef = React.useRef<ReturnType<typeof setTimeout>>();
+  const debounceRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const handleQueryChange = (text: string) => {
     setQuery(text);
@@ -90,7 +96,7 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({
           <Image source={{ uri: food.imageUrl }} style={styles.foodImage} />
         ) : (
           <View style={styles.foodImagePlaceholder}>
-            <Text style={styles.foodImageEmoji}>🍖</Text>
+            <Text style={styles.foodImageEmoji}>🍽️</Text>
           </View>
         )}
         <View style={styles.foodInfo}>
@@ -106,15 +112,15 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({
       </View>
       <View style={styles.foodRight}>
         <Text style={styles.foodCalories}>{Math.round(food.calories)}</Text>
-        <Text style={styles.foodKcal}>kcal</Text>
+        <Text style={styles.foodKcal}>{t('kcal')}</Text>
         <View style={styles.foodMacros}>
-          <Text style={[styles.macroText, { color: Colors.protein }]}>
+          <Text style={[styles.macroText, { color: colors.macros.protein }]}>
             {Math.round(food.proteinG)}P
           </Text>
-          <Text style={[styles.macroText, { color: Colors.carbs }]}>
+          <Text style={[styles.macroText, { color: colors.macros.carbs }]}>
             {Math.round(food.carbsG)}C
           </Text>
-          <Text style={[styles.macroText, { color: Colors.fat }]}>
+          <Text style={[styles.macroText, { color: colors.macros.fat }]}>
             {Math.round(food.fatG)}F
           </Text>
         </View>
@@ -124,27 +130,27 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({
 
   return (
     <LinearGradient
-      colors={[Colors.background, '#0A0A14']}
+      colors={colors.gradient as any}
       style={styles.gradient}
     >
       <View style={styles.header}>
-        <Text style={styles.title}>🔍 Seek Sustenance</Text>
-        <Text style={styles.subtitle}>for {mealType.toLowerCase().replace('_', ' ')}</Text>
+        <Text style={styles.title}>{t('title')}</Text>
+        <Text style={styles.subtitle}>{t('subtitleFor', { meal: messages.mealNames[mealType].toLowerCase() })}</Text>
 
         <View style={styles.searchRow}>
           <View style={styles.searchInputWrapper}>
             <Input
-              placeholder="Search the dark tome of foods..."
+              placeholder={t('searchPlaceholder')}
               value={query}
               onChangeText={handleQueryChange}
               leftIcon={
-                <Ionicons name="search" size={18} color={Colors.textMuted} />
+                <Ionicons name="search" size={18} color={colors.text.muted} />
               }
               containerStyle={styles.searchInput}
             />
           </View>
           <TouchableOpacity style={styles.scanButton} onPress={onScanBarcode}>
-            <Ionicons name="barcode-outline" size={24} color={Colors.textPrimary} />
+            <Ionicons name="barcode-outline" size={24} color={colors.text.onPrimary} />
           </TouchableOpacity>
         </View>
 
@@ -156,7 +162,7 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({
               onPress={() => setActiveTab(tab)}
             >
               <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>
-                {tab === 'recent' ? '⏱ Recent' : tab === 'favorites' ? '❤️ Favorites' : '🌀 Results'}
+                {t(`tabs.${tab === 'search' ? 'results' : tab}`)}
               </Text>
             </TouchableOpacity>
           ))}
@@ -165,8 +171,8 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({
 
       {isSearching ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={Colors.primaryLight} />
-          <Text style={styles.loadingText}>Consulting the dark oracle...</Text>
+          <ActivityIndicator size="large" color={colors.primaryLight} />
+          <Text style={styles.loadingText}>{t('loadingText')}</Text>
         </View>
       ) : (
         <FlatList
@@ -177,20 +183,17 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <View style={styles.emptyState}>
-              <Text style={styles.emptyEmoji}>
-                {activeTab === 'favorites' ? '💔' : activeTab === 'recent' ? '📜' : '🌀'}
-              </Text>
               <Text style={styles.emptyTitle}>
                 {activeTab === 'favorites'
-                  ? 'No sacred favorites yet.'
+                  ? t('empty.favoritesTitle')
                   : activeTab === 'recent'
-                    ? 'No recent summonings.'
-                    : 'The void returns nothing.'}
+                    ? t('empty.recentTitle')
+                    : t('empty.searchTitle')}
               </Text>
               <Text style={styles.emptySubtitle}>
                 {activeTab === 'search' && query.length < 2
-                  ? 'Type at least 2 runes to search.'
-                  : 'Begin your dark quest for sustenance.'}
+                  ? t('empty.searchHintShort')
+                  : t('empty.searchHintDefault')}
               </Text>
             </View>
           }
@@ -200,73 +203,74 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  gradient: { flex: 1 },
-  header: { paddingHorizontal: Spacing.base, paddingTop: 52, paddingBottom: Spacing.sm },
-  title: { fontSize: FontSize['2xl'], fontWeight: '900', color: Colors.textPrimary },
-  subtitle: { fontSize: FontSize.sm, color: Colors.textMuted, fontStyle: 'italic', marginBottom: 12 },
-  searchRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
-  searchInputWrapper: { flex: 1 },
-  searchInput: { marginBottom: 0 },
-  scanButton: {
-    width: 52,
-    height: 52,
-    backgroundColor: Colors.primary,
-    borderRadius: BorderRadius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  tabs: { flexDirection: 'row', gap: 8, marginTop: 12 },
-  tab: {
-    flex: 1,
-    paddingVertical: 8,
-    borderRadius: BorderRadius.md,
-    alignItems: 'center',
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
-  tabActive: { borderColor: Colors.primaryLight, backgroundColor: Colors.primaryGlow },
-  tabText: { fontSize: FontSize.xs, fontWeight: '700', color: Colors.textMuted },
-  tabTextActive: { color: Colors.primaryLight },
-  loadingContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 },
-  loadingText: { color: Colors.textMuted, fontStyle: 'italic' },
-  listContent: { paddingHorizontal: Spacing.base, paddingBottom: 100 },
-  foodItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-    gap: 12,
-  },
-  foodLeft: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12 },
-  foodImage: { width: 44, height: 44, borderRadius: BorderRadius.sm },
-  foodImagePlaceholder: {
-    width: 44,
-    height: 44,
-    borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.surfaceElevated,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  foodImageEmoji: { fontSize: 24 },
-  foodInfo: { flex: 1 },
-  foodName: { fontSize: FontSize.sm, fontWeight: '700', color: Colors.textPrimary },
-  foodBrand: { fontSize: FontSize.xs, color: Colors.gold, marginTop: 2 },
-  foodServing: { fontSize: FontSize.xs, color: Colors.textMuted, marginTop: 2 },
-  foodRight: { alignItems: 'flex-end' },
-  foodCalories: {
-    fontSize: FontSize.lg,
-    fontWeight: '800',
-    color: Colors.textPrimary,
-    fontVariant: ['tabular-nums'],
-  },
-  foodKcal: { fontSize: FontSize.xs, color: Colors.textMuted },
-  foodMacros: { flexDirection: 'row', gap: 6, marginTop: 4 },
-  macroText: { fontSize: FontSize.xs, fontWeight: '700' },
-  emptyState: { alignItems: 'center', paddingTop: 60, gap: 12 },
-  emptyEmoji: { fontSize: 56 },
-  emptyTitle: { fontSize: FontSize.base, fontWeight: '700', color: Colors.textSecondary },
-  emptySubtitle: { fontSize: FontSize.sm, color: Colors.textMuted, fontStyle: 'italic' },
-});
+function makeStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    gradient: { flex: 1 },
+    header: { paddingHorizontal: Spacing.base, paddingTop: 52, paddingBottom: Spacing.sm },
+    title: { fontSize: FontSize['2xl'], fontWeight: '900', color: colors.text.primary },
+    subtitle: { fontSize: FontSize.sm, color: colors.text.muted, marginBottom: 12 },
+    searchRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
+    searchInputWrapper: { flex: 1 },
+    searchInput: { marginBottom: 0 },
+    scanButton: {
+      width: 52,
+      height: 52,
+      backgroundColor: colors.primary,
+      borderRadius: BorderRadius.md,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    tabs: { flexDirection: 'row', gap: 8, marginTop: 12 },
+    tab: {
+      flex: 1,
+      paddingVertical: 8,
+      borderRadius: BorderRadius.md,
+      alignItems: 'center',
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    tabActive: { borderColor: colors.primaryLight, backgroundColor: colors.primaryGlow },
+    tabText: { fontSize: FontSize.xs, fontWeight: '700', color: colors.text.muted },
+    tabTextActive: { color: colors.primaryLight },
+    loadingContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 },
+    loadingText: { color: colors.text.muted },
+    listContent: { paddingHorizontal: Spacing.base, paddingBottom: 100 },
+    foodItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+      gap: 12,
+    },
+    foodLeft: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12 },
+    foodImage: { width: 44, height: 44, borderRadius: BorderRadius.sm },
+    foodImagePlaceholder: {
+      width: 44,
+      height: 44,
+      borderRadius: BorderRadius.sm,
+      backgroundColor: colors.surfaceElevated,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    foodImageEmoji: { fontSize: 24 },
+    foodInfo: { flex: 1 },
+    foodName: { fontSize: FontSize.sm, fontWeight: '700', color: colors.text.primary },
+    foodBrand: { fontSize: FontSize.xs, color: colors.secondary, marginTop: 2 },
+    foodServing: { fontSize: FontSize.xs, color: colors.text.muted, marginTop: 2 },
+    foodRight: { alignItems: 'flex-end' },
+    foodCalories: {
+      fontSize: FontSize.lg,
+      fontWeight: '800',
+      color: colors.text.primary,
+      fontVariant: ['tabular-nums'],
+    },
+    foodKcal: { fontSize: FontSize.xs, color: colors.text.muted },
+    foodMacros: { flexDirection: 'row', gap: 6, marginTop: 4 },
+    macroText: { fontSize: FontSize.xs, fontWeight: '700' },
+    emptyState: { alignItems: 'center', paddingTop: 60, gap: 12 },
+    emptyTitle: { fontSize: FontSize.base, fontWeight: '700', color: colors.text.secondary },
+    emptySubtitle: { fontSize: FontSize.sm, color: colors.text.muted },
+  });
+}

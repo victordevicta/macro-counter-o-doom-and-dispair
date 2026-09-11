@@ -1,0 +1,21 @@
+{
+  "headerTitle": "Diary",
+  "today": "Today",
+  "dailyTotals": "DAILY TOTALS",
+  "kcal": "kcal",
+  "proteinG": "Protein (g)",
+  "carbsG": "Carbs (g)",
+  "fatG": "Fat (g)",
+  "mealSection": {
+    "item_one": "{{count}} item",
+    "item_other": "{{count}} items",
+    "addPrompt": "+ Add food",
+    "mealTotal": "Meal Total"
+  },
+  "foodEntry": {
+    "deleteTitle": "Remove Item",
+    "deleteMessage": "Remove \"{{name}}\" from your diary?",
+    "keepButton": "Keep",
+    "removeButton": "Remove"
+  }
+}

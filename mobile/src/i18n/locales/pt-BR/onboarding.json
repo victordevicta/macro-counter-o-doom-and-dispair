@@ -1,0 +1,41 @@
+{
+  "title": "Configure Seu Perfil",
+  "subtitle": "Conte sobre você para calcularmos suas metas.",
+  "body": {
+    "sectionTitle": "SUAS MEDIDAS",
+    "sexLabel": "Sexo",
+    "ageLabel": "Idade (anos)",
+    "weightLabel": "Peso (kg)",
+    "heightLabel": "Altura (cm)"
+  },
+  "activity": {
+    "sectionTitle": "NÍVEL DE ATIVIDADE",
+    "options": {
+      "SEDENTARY": { "label": "Sedentário", "desc": "Pouco ou nenhum exercício" },
+      "LIGHTLY_ACTIVE": { "label": "Levemente Ativo", "desc": "1-3 dias/semana" },
+      "MODERATELY_ACTIVE": { "label": "Moderadamente Ativo", "desc": "3-5 dias/semana" },
+      "VERY_ACTIVE": { "label": "Muito Ativo", "desc": "6-7 dias/semana" },
+      "EXTRA_ACTIVE": { "label": "Extremamente Ativo", "desc": "Duas vezes ao dia" }
+    }
+  },
+  "goal": {
+    "sectionTitle": "SEU OBJETIVO",
+    "options": {
+      "LOSE_WEIGHT": { "label": "Perder Peso", "desc": "Reduzir gordura corporal" },
+      "MAINTAIN": { "label": "Manter", "desc": "Manter sua forma atual" },
+      "GAIN_MUSCLE": { "label": "Ganhar Músculo", "desc": "Construir força e volume" }
+    }
+  },
+  "nav": {
+    "back": "← VOLTAR",
+    "next": "PRÓXIMO →",
+    "finish": "FINALIZAR",
+    "finishing": "Calculando..."
+  },
+  "alerts": {
+    "incompleteTitle": "Incompleto",
+    "incompleteMessage": "Preencha todas as medidas.",
+    "failedTitle": "Falha na Configuração",
+    "failedFallback": "Algo deu errado. Tente novamente."
+  }
+}

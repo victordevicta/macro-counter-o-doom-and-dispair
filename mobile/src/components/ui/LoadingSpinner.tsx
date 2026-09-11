@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Animated, StyleSheet, Text } from 'react-native';
-import { Colors } from '../../theme/colors';
+import { View, Animated, StyleSheet } from 'react-native';
+import { useThemeColors } from '../../hooks/useTheme';
 import { FontSize } from '../../theme/typography';
 
 interface LoadingSpinnerProps {
@@ -11,9 +11,11 @@ interface LoadingSpinnerProps {
 
 export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   size = 40,
-  color = Colors.primaryLight,
+  color,
   message,
 }) => {
+  const colors = useThemeColors();
+  const resolvedColor = color ?? colors.primaryLight;
   const rotation = useRef(new Animated.Value(0)).current;
   const pulse = useRef(new Animated.Value(1)).current;
 
@@ -48,13 +50,13 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
             width: size,
             height: size,
             borderRadius: size / 2,
-            borderColor: color,
+            borderColor: resolvedColor,
             transform: [{ rotate: spin }],
           },
         ]}
       />
       {message && (
-        <Animated.Text style={[styles.message, { opacity: pulse }]}>
+        <Animated.Text style={[styles.message, { opacity: pulse, color: colors.text.muted }]}>
           {message}
         </Animated.Text>
       )}
@@ -71,7 +73,5 @@ const styles = StyleSheet.create({
   },
   message: {
     fontSize: FontSize.sm,
-    color: Colors.textMuted,
-    fontStyle: 'italic',
   },
 });

@@ -1,0 +1,34 @@
+{
+  "title": "Progress",
+  "subtitle": "Track your changes over time.",
+  "currentForm": {
+    "sectionTitle": "CURRENT STATS",
+    "bodyFat": "Body Fat",
+    "kgChange": "kg Change"
+  },
+  "trend": {
+    "down": "Trending down",
+    "up": "Trending up",
+    "stable": "Stable"
+  },
+  "logButton": "+ LOG TODAY'S WEIGHT",
+  "measureVessel": {
+    "sectionTitle": "LOG WEIGHT",
+    "weightLabel": "WEIGHT (kg)",
+    "bodyFatLabel": "BODY FAT %",
+    "notesLabel": "NOTES (optional)",
+    "notesPlaceholder": "Morning, post-workout...",
+    "recordButton": "SAVE ENTRY",
+    "recordingButton": "Saving..."
+  },
+  "chronicle": {
+    "sectionTitle": "HISTORY",
+    "empty": "No entries yet. Log your first weigh-in."
+  },
+  "alerts": {
+    "failedTitle": "Failed",
+    "failedFallback": "Couldn't save this entry.",
+    "invalidTitle": "Invalid",
+    "invalidMessage": "Enter a valid weight in kg."
+  }
+}

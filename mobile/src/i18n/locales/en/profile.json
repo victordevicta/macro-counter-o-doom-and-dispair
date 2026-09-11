@@ -1,0 +1,45 @@
+{
+  "badge": "Member",
+  "activityLabels": {
+    "SEDENTARY": "Sedentary",
+    "LIGHTLY_ACTIVE": "Lightly Active",
+    "MODERATELY_ACTIVE": "Moderately Active",
+    "VERY_ACTIVE": "Very Active",
+    "EXTRA_ACTIVE": "Extra Active"
+  },
+  "goalLabels": {
+    "LOSE_WEIGHT": "Lose Weight",
+    "MAINTAIN": "Maintain",
+    "GAIN_MUSCLE": "Gain Muscle"
+  },
+  "bodyStats": {
+    "sectionTitle": "BODY STATS",
+    "weight": "Weight",
+    "height": "Height",
+    "sex": "Sex",
+    "activity": "Activity",
+    "goal": "Goal"
+  },
+  "goalsSection": {
+    "sectionTitle": "NUTRITION GOALS",
+    "calories": "Calories",
+    "protein": "Protein",
+    "carbs": "Carbs",
+    "fat": "Fat",
+    "fiber": "Fiber",
+    "sodium": "Sodium"
+  },
+  "about": {
+    "sectionTitle": "ABOUT",
+    "appName": "Macro Counter",
+    "tagline": "Track your nutrition with clarity.",
+    "version": "Version 1.0.0"
+  },
+  "logoutButton": "LOG OUT",
+  "logoutConfirm": {
+    "title": "Log Out?",
+    "message": "Are you sure you want to log out?",
+    "cancelButton": "Cancel",
+    "confirmButton": "Log Out"
+  }
+}

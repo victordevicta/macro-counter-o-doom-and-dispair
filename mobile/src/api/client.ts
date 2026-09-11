@@ -6,7 +6,7 @@ const BASE_URL = __DEV__
   ? Platform.OS === 'web'
     ? 'http://localhost:3000/api/v1'       // browser no mesmo PC
     : 'http://192.168.15.16:3000/api/v1'   // celular físico via Wi-Fi
-  : 'https://api.macrocounterdoom.com/api/v1';
+  : process.env.EXPO_PUBLIC_API_URL || 'https://api.macrocounterdoom.com/api/v1';
 
 const ACCESS_TOKEN_KEY = 'doom_access_token';
 const REFRESH_TOKEN_KEY = 'doom_refresh_token';

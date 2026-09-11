@@ -1,0 +1,19 @@
+{
+  "title": "Buscar Alimentos",
+  "subtitleFor": "para {{meal}}",
+  "searchPlaceholder": "Busque um alimento...",
+  "tabs": {
+    "recent": "Recentes",
+    "favorites": "Favoritos",
+    "results": "Resultados"
+  },
+  "loadingText": "Buscando...",
+  "kcal": "kcal",
+  "empty": {
+    "favoritesTitle": "Nenhum favorito ainda.",
+    "recentTitle": "Nenhum alimento recente.",
+    "searchTitle": "Nenhum resultado encontrado.",
+    "searchHintShort": "Digite pelo menos 2 caracteres para buscar.",
+    "searchHintDefault": "Tente buscar um alimento."
+  }
+}

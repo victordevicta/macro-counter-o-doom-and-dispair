@@ -1,0 +1,45 @@
+{
+  "badge": "Membro",
+  "activityLabels": {
+    "SEDENTARY": "Sedentário",
+    "LIGHTLY_ACTIVE": "Levemente Ativo",
+    "MODERATELY_ACTIVE": "Moderadamente Ativo",
+    "VERY_ACTIVE": "Muito Ativo",
+    "EXTRA_ACTIVE": "Extremamente Ativo"
+  },
+  "goalLabels": {
+    "LOSE_WEIGHT": "Perder Peso",
+    "MAINTAIN": "Manter",
+    "GAIN_MUSCLE": "Ganhar Músculo"
+  },
+  "bodyStats": {
+    "sectionTitle": "MEDIDAS CORPORAIS",
+    "weight": "Peso",
+    "height": "Altura",
+    "sex": "Sexo",
+    "activity": "Atividade",
+    "goal": "Objetivo"
+  },
+  "goalsSection": {
+    "sectionTitle": "METAS NUTRICIONAIS",
+    "calories": "Calorias",
+    "protein": "Proteína",
+    "carbs": "Carboidratos",
+    "fat": "Gordura",
+    "fiber": "Fibra",
+    "sodium": "Sódio"
+  },
+  "about": {
+    "sectionTitle": "SOBRE",
+    "appName": "Macro Counter",
+    "tagline": "Acompanhe sua nutrição com clareza.",
+    "version": "Versão 1.0.0"
+  },
+  "logoutButton": "SAIR",
+  "logoutConfirm": {
+    "title": "Sair da Conta?",
+    "message": "Tem certeza que deseja sair?",
+    "cancelButton": "Cancelar",
+    "confirmButton": "Sair"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "title": "Barcode Scanner",
+  "permission": {
+    "title": "Camera Access Required",
+    "message": "We need camera access to scan barcodes.",
+    "grantButton": "GRANT ACCESS",
+    "backLink": "← Go back"
+  },
+  "instructions": {
+    "align": "Align barcode within the frame",
+    "retry": "Scan failed. Retry?",
+    "retryButton": "SCAN AGAIN"
+  },
+  "loadingText": "Looking up product...",
+  "alerts": {
+    "title": "Scan Failed",
+    "fallbackMessage": "Couldn't find this barcode.",
+    "scanAgain": "Scan Again",
+    "goBack": "Go Back"
+  }
+}

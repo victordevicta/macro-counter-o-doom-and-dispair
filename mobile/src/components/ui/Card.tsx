@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
-import { Colors } from '../../theme/colors';
+import { useThemeColors } from '../../hooks/useTheme';
+import { ThemeColors } from '../../themes/types';
 import { BorderRadius, Shadow } from '../../theme/spacing';
 
 interface CardProps {
@@ -16,6 +17,8 @@ export const Card: React.FC<CardProps> = ({
   variant = 'default',
   padding = 16,
 }) => {
+  const colors = useThemeColors();
+  const styles = makeStyles(colors);
   return (
     <View
       style={[
@@ -32,24 +35,26 @@ export const Card: React.FC<CardProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  base: {
-    backgroundColor: Colors.surfaceCard,
-    borderRadius: BorderRadius.lg,
-    ...Shadow.md,
-  },
-  elevated: {
-    backgroundColor: Colors.surfaceElevated,
-    ...Shadow.lg,
-  },
-  bordered: {
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
-  crimson: {
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.primaryDark,
-  },
-});
+function makeStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    base: {
+      backgroundColor: colors.surfaceCard,
+      borderRadius: BorderRadius.lg,
+      ...Shadow.md,
+    },
+    elevated: {
+      backgroundColor: colors.surfaceElevated,
+      ...Shadow.lg,
+    },
+    bordered: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    crimson: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.primaryDark,
+    },
+  });
+}

@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   ViewStyle,
 } from 'react-native';
-import { Colors } from '../../theme/colors';
+import { useThemeColors } from '../../hooks/useTheme';
+import { ThemeColors } from '../../themes/types';
 import { BorderRadius } from '../../theme/spacing';
 import { FontSize } from '../../theme/typography';
 
@@ -50,6 +51,8 @@ export const Input: React.FC<InputProps> = ({
   onRightIconPress,
   hint,
 }) => {
+  const colors = useThemeColors();
+  const styles = makeStyles(colors);
   const [isFocused, setIsFocused] = useState(false);
 
   return (
@@ -74,7 +77,7 @@ export const Input: React.FC<InputProps> = ({
             multiline && styles.multiline,
           ]}
           placeholder={placeholder}
-          placeholderTextColor={Colors.textMuted}
+          placeholderTextColor={colors.text.muted}
           value={value}
           onChangeText={onChangeText}
           onBlur={() => {
@@ -88,7 +91,7 @@ export const Input: React.FC<InputProps> = ({
           multiline={multiline}
           numberOfLines={numberOfLines}
           editable={editable}
-          selectionColor={Colors.primaryLight}
+          selectionColor={colors.primaryLight}
         />
 
         {rightIcon && (
@@ -108,49 +111,50 @@ export const Input: React.FC<InputProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: { marginBottom: 16 },
-  label: {
-    fontSize: FontSize.sm,
-    fontWeight: '600',
-    color: Colors.textSecondary,
-    marginBottom: 6,
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
-  },
-  inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.surfaceElevated,
-    borderRadius: BorderRadius.md,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    minHeight: 52,
-  },
-  focused: { borderColor: Colors.primaryLight, borderWidth: 1.5 },
-  errorBorder: { borderColor: Colors.errorLight },
-  disabled: { opacity: 0.6 },
-  input: {
-    flex: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    fontSize: FontSize.base,
-    color: Colors.textPrimary,
-  },
-  inputWithLeft: { paddingLeft: 8 },
-  inputWithRight: { paddingRight: 8 },
-  multiline: { paddingTop: 14, textAlignVertical: 'top' },
-  leftIcon: { paddingLeft: 12 },
-  rightIcon: { paddingRight: 12 },
-  error: {
-    fontSize: FontSize.xs,
-    color: Colors.errorLight,
-    marginTop: 4,
-    fontStyle: 'italic',
-  },
-  hint: {
-    fontSize: FontSize.xs,
-    color: Colors.textMuted,
-    marginTop: 4,
-  },
-});
+function makeStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: { marginBottom: 16 },
+    label: {
+      fontSize: FontSize.sm,
+      fontWeight: '600',
+      color: colors.text.secondary,
+      marginBottom: 6,
+      letterSpacing: 0.5,
+      textTransform: 'uppercase',
+    },
+    inputWrapper: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.inputBackground,
+      borderRadius: BorderRadius.md,
+      borderWidth: 1,
+      borderColor: colors.inputBorder,
+      minHeight: 52,
+    },
+    focused: { borderColor: colors.primaryLight, borderWidth: 1.5 },
+    errorBorder: { borderColor: colors.status.errorLight },
+    disabled: { opacity: 0.6 },
+    input: {
+      flex: 1,
+      paddingHorizontal: 16,
+      paddingVertical: 14,
+      fontSize: FontSize.base,
+      color: colors.text.primary,
+    },
+    inputWithLeft: { paddingLeft: 8 },
+    inputWithRight: { paddingRight: 8 },
+    multiline: { paddingTop: 14, textAlignVertical: 'top' },
+    leftIcon: { paddingLeft: 12 },
+    rightIcon: { paddingRight: 12 },
+    error: {
+      fontSize: FontSize.xs,
+      color: colors.status.errorLight,
+      marginTop: 4,
+    },
+    hint: {
+      fontSize: FontSize.xs,
+      color: colors.text.muted,
+      marginTop: 4,
+    },
+  });
+}

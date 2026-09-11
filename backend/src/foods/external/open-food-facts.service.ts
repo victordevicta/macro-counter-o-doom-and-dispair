@@ -14,7 +14,7 @@ export class OpenFoodFactsService {
   async searchByBarcode(barcode: string) {
     try {
       const response = await axios.get(`${this.baseUrl}/api/v2/product/${barcode}.json`, {
-        headers: { 'User-Agent': 'MacroCounterDoom/1.0 (doom@doomvault.com)' },
+        headers: { 'User-Agent': 'MacroCounter/1.0' },
         timeout: 8000,
       });
 
@@ -30,7 +30,7 @@ export class OpenFoodFactsService {
   async search(query: string, page = 1) {
     try {
       const response = await axios.get(`${this.baseUrl}/cgi/search.pl`, {
-        headers: { 'User-Agent': 'MacroCounterDoom/1.0 (doom@doomvault.com)' },
+        headers: { 'User-Agent': 'MacroCounter/1.0' },
         params: {
           search_terms: query,
           search_simple: 1,
